@@ -5,22 +5,27 @@
 using namespace std;
 
 namespace {
+auto split_id_lists(auto const & loc_id_lists)
+{
+    auto ids1 = flux::ref(loc_id_lists)
+            .map([](auto & id_pair) { return std::get<0>(id_pair); })
+            .template to<std::vector>();
+
+    auto ids2 = flux::ref(loc_id_lists)
+            .map([](auto & id_pair) { return std::get<1>(id_pair); })
+            .template to<std::vector>();
+
+    std::ranges::sort(ids1);
+    std::ranges::sort(ids2);
+
+    return std::tuple{ids1, ids2};
+}
+
 /// Find total distance between location id lists.
 /// https://adventofcode.com/2024/day/1
 puzzle_reg _1{"1.1", []{
     using day1::loc_id_lists;
-
-    // split into individual lists
-    auto ids1 = flux::ref(loc_id_lists)
-            .map([](auto & id_pair) { return std::get<0>(id_pair); })
-            .to<std::vector>();
-
-    auto ids2 = flux::ref(loc_id_lists)
-            .map([](auto & id_pair) { return std::get<1>(id_pair); })
-            .to<std::vector>();
-
-    std::ranges::sort(ids1);
-    std::ranges::sort(ids2);
+    auto [ids1, ids2] = split_id_lists(loc_id_lists);
 
     // compute distance
     int dist = 0;
@@ -34,18 +39,7 @@ puzzle_reg _1{"1.1", []{
 /// https://adventofcode.com/2024/day/1#part2
 puzzle_reg _2{"1.2", []{
     using day1::loc_id_lists;
-
-    // split into individual lists
-    auto ids1 = flux::ref(loc_id_lists)
-            .map([](auto & id_pair) { return std::get<0>(id_pair); })
-            .to<std::vector>();
-
-    auto ids2 = flux::ref(loc_id_lists)
-            .map([](auto & id_pair) { return std::get<1>(id_pair); })
-            .to<std::vector>();
-
-    std::ranges::sort(ids1);
-    std::ranges::sort(ids2);
+    auto [ids1, ids2] = split_id_lists(loc_id_lists);
 
     // compute similarity
     int sim = 0;

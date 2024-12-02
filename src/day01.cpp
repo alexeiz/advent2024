@@ -43,24 +43,26 @@ puzzle_reg _2{"1.2", []{
 
     // compute similarity
     int sim = 0;
-    int last_val = -1;
-    int count = 0;
     auto p1 = flux::begin(ids1);
     auto p2 = flux::begin(ids2);
-    for (; p1 != flux::end(ids1) and p2 != flux::end(ids2); ++p1)
+    while (p1 != flux::end(ids1) and p2 != flux::end(ids2))
     {
-        if (*p1 == last_val)
-            sim += *p1 * count;
+        auto cmp = *p1 <=> *p2;
+        if (cmp < 0)
+            ++p1;
+        else if (cmp > 0)
+            ++p2;
         else
         {
-            for (; p2 != flux::end(ids2) && *p2 < *p1; ++p2)
+            auto q1 = p1;
+            for (; p1 != flux::end(ids1) && *p1 == *q1; ++p1)
                 ;
 
-            last_val = *p1;
-            for (count = 0; p2 != flux::end(ids2) && *p1 == *p2; ++p2, ++count)
+            auto q2 = p2;
+            for (; p2 != flux::end(ids2) && *p2 == *q2; ++p2)
                 ;
 
-            sim += *p1 * count;
+            sim += *q1 * (p1 - q1) * (p2 - q2);
         }
     }
 

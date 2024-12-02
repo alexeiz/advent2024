@@ -1,0 +1,8 @@
+# vim
+.*.swp
+.swp
+
+build/
+build-dbg/
+build-rel/
+.gdb_history

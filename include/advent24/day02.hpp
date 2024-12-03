@@ -3,7 +3,7 @@
 #include <vector>
 
 namespace day2_test {
-inline std::vector<int> levels[] = {
+inline std::vector<int> const levels[] = {
     {7, 6, 4, 2, 1},
     {1, 2, 7, 8, 9},
     {9, 7, 6, 2, 1},
@@ -14,7 +14,7 @@ inline std::vector<int> levels[] = {
 }  // namespace day2_test1
 
 namespace day2 {
-inline std::vector<int> levels[] = {
+inline std::vector<int> const levels[] = {
     {51, 54, 57, 60, 61, 64, 67, 64},
     {54, 56, 57, 58, 60, 60},
     {41, 44, 45, 46, 48, 50, 54},

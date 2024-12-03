@@ -29,7 +29,8 @@ include(cmake/Deps.cmake)
 include_directories(include)
 set(SOURCES
     src/main.cpp
-    src/day01.cpp)
+    src/day01.cpp
+    src/day02.cpp)
 
 # executable
 add_executable(advent24 ${SOURCES})

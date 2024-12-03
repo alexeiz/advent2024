@@ -5,33 +5,27 @@
 using namespace std;
 
 namespace {
+auto make_tester(int low, int high)
+{
+    return [low, high](auto const & p) {
+        int diff = get<0>(p) - get<1>(p);
+        return low <= diff and diff <= high;
+    };
+}
+
+auto test_decr = make_tester(1, 3);
+auto test_incr = make_tester(-3, -1);
+
 /// Find safe level reports.
 /// https://adventofcode.com/2024/day/2
 puzzle_reg _1{"2.1", []{
     using day2::levels;
 
-    struct safety
-    {
-        bool safe;
-        strong_ordering order;
-        int prev;
-    };
-
     int safe_count = 0;
     for (auto const & lev: levels)
     {
-        auto res = flux::fold(
-            lev,
-            [](safety acc, int v) -> safety {
-                if (!acc.safe) return acc;
-                if (!acc.prev) return {true, strong_ordering::equal, v};
-                int diff = abs(v - acc.prev);
-                if (diff < 1 or diff > 3) return {false, acc.order, v};
-                if (acc.order == strong_ordering::equal) return {true, acc.prev <=> v, v};
-                return {acc.order == (acc.prev <=> v), acc.order, v};
-            },
-            safety{true, strong_ordering::equal, 0});
-        if (res.safe)
+        auto adj_lev = flux::ref(lev).pairwise();
+        if (adj_lev.all(test_decr) or adj_lev.all(test_incr))
             ++safe_count;
     }
 
@@ -43,42 +37,29 @@ puzzle_reg _1{"2.1", []{
 puzzle_reg _2{"2.2", []{
     using day2::levels;
 
-    struct safety
-    {
-        bool safe;
-        strong_ordering order;
-        int prev;
-        int pos;
-    };
-
-    auto tester = [](safety acc, int v) -> safety {
-        auto [safe, order, prev, pos] = acc;
-        if (!safe) return acc;
-        if (pos == 0) return {true, order, v, pos + 1};
-        int diff = abs(v - prev);
-        if (diff < 1 or diff > 3) return {false, order, v, pos + 1};
-        if (pos == 1) return {true, prev <=> v, v, pos + 1};
-        return {order == (acc.prev <=> v), order, v, pos + 1};
-    };
-
     int safe_count = 0;
     for (auto const & lev: levels)
     {
-        auto res = flux::fold(lev, tester, safety{true, strong_ordering::equal, 0, 0});
-        if (!res.safe)
+        auto adj_lev = flux::ref(lev).pairwise();
+        if (adj_lev.all(test_decr) or adj_lev.all(test_incr))
+            ++safe_count;
+        else
         {
             // try without one element
             for (auto n: flux::iota(0l, ssize(lev)))
             {
-                res = flux::ref(lev)
-                    .filter([n=n](auto &) mutable { return n-- != 0; })
-                    .fold(tester, safety{true, strong_ordering::equal, 0, 0});
-                if (res.safe)
+                auto dampened = flux::zip(flux::ints(), flux::ref(lev))
+                    .filter([n](auto const & p) { return get<0>(p) != n; })
+                    .map([](auto const & p) { return get<1>(p); })
+                    .to<vector>();
+                auto adj_lev = flux::ref(dampened).pairwise();
+                if (adj_lev.all(test_decr) or adj_lev.all(test_incr))
+                {
+                    ++safe_count;
                     break;
+                }
             }
         }
-        if (res.safe)
-            ++safe_count;
     }
 
     fmt::println("safe reports: {}", safe_count);

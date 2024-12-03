@@ -25,6 +25,7 @@
 
 #include <fmt/core.h>
 #include <fmt/ostream.h>
+#include <fmt/ranges.h>
 
 #include <flux.hpp>
 

@@ -18,9 +18,10 @@ puzzle_reg _1{"2.1", []{
     };
 
     int count_safe = 0;
-    for (auto & lev: levels)
+    for (auto const & lev: levels)
     {
-        auto res = flux::ref(lev).fold(
+        auto res = flux::fold(
+            lev,
             [](safety acc, int v) -> safety {
                 if (!acc.safe) return acc;
                 if (!acc.prev) return {true, strong_ordering::equal, v};
@@ -61,11 +62,9 @@ puzzle_reg _2{"2.2", []{
     };
 
     int count_safe = 0;
-    for (auto & lev: levels)
+    for (auto const & lev: levels)
     {
-        auto res = flux::ref(lev).fold(
-            tester,
-            safety{true, strong_ordering::equal, 0, 0});
+        auto res = flux::fold(lev, tester, safety{true, strong_ordering::equal, 0, 0});
         if (!res.safe)
         {
             // try without one element
@@ -73,8 +72,7 @@ puzzle_reg _2{"2.2", []{
             {
                 res = flux::ref(lev)
                     .filter([n=n](auto &) mutable { return n-- != 0; })
-                    .fold(tester,
-                          safety{true, strong_ordering::equal, 0, 0});
+                    .fold(tester, safety{true, strong_ordering::equal, 0, 0});
                 if (res.safe)
                     break;
             }

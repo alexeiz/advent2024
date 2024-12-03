@@ -17,7 +17,7 @@ puzzle_reg _1{"2.1", []{
         int prev;
     };
 
-    int count_safe = 0;
+    int safe_count = 0;
     for (auto const & lev: levels)
     {
         auto res = flux::fold(
@@ -32,10 +32,10 @@ puzzle_reg _1{"2.1", []{
             },
             safety{true, strong_ordering::equal, 0});
         if (res.safe)
-            ++count_safe;
+            ++safe_count;
     }
 
-    fmt::println("safe reports: {}", count_safe);
+    fmt::println("safe reports: {}", safe_count);
 }};
 
 /// Count safe level reports with dampener.
@@ -61,7 +61,7 @@ puzzle_reg _2{"2.2", []{
         return {order == (acc.prev <=> v), order, v, pos + 1};
     };
 
-    int count_safe = 0;
+    int safe_count = 0;
     for (auto const & lev: levels)
     {
         auto res = flux::fold(lev, tester, safety{true, strong_ordering::equal, 0, 0});
@@ -78,9 +78,9 @@ puzzle_reg _2{"2.2", []{
             }
         }
         if (res.safe)
-            ++count_safe;
+            ++safe_count;
     }
 
-    fmt::println("safe reports: {}", count_safe);
+    fmt::println("safe reports: {}", safe_count);
 }};
 }

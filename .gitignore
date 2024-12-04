@@ -6,3 +6,4 @@ build/
 build-dbg/
 build-rel/
 .gdb_history
+.vscode/settings.json

@@ -30,7 +30,8 @@ include_directories(include)
 set(SOURCES
     src/main.cpp
     src/day01.cpp
-    src/day02.cpp)
+    src/day02.cpp
+    src/day03.cpp)
 
 # executable
 add_executable(advent24 ${SOURCES})

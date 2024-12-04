@@ -28,6 +28,7 @@
 #include <fmt/ranges.h>
 
 #include <flux.hpp>
+#include <boost/regex.hpp>
 
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;

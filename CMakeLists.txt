@@ -21,7 +21,6 @@ endif ()
 
 # set compiler flags
 set(CMAKE_CXX_STANDARD   23)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/Deps.cmake)
 
@@ -31,7 +30,8 @@ set(SOURCES
     src/main.cpp
     src/day01.cpp
     src/day02.cpp
-    src/day03.cpp)
+    src/day03.cpp
+    src/day04.cpp)
 
 # executable
 add_executable(advent24 ${SOURCES})

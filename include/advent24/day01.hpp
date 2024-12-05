@@ -11,7 +11,7 @@ inline constexpr std::pair<int, int> loc_id_lists[] = {
     {3, 9},
     {3, 3},
 };
-}  // namespace day1_test1
+}  // namespace day1_test
 
 namespace day1 {
 inline constexpr std::pair<int, int> loc_id_lists[] = {

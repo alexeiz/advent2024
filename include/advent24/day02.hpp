@@ -11,7 +11,7 @@ inline std::vector<int> const levels[] = {
     {8, 6, 4, 4, 1},
     {1, 3, 6, 7, 9},
 };
-}  // namespace day2_test1
+}  // namespace day2_test
 
 namespace day2 {
 inline std::vector<int> const levels[] = {

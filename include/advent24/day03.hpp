@@ -2,11 +2,11 @@
 
 namespace day3_test {
 inline std::string_view const memory{R"(xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5)))"};
-}  // namespace day3_test1
+}  // namespace day3_test
 
 namespace day3_test2 {
 inline std::string_view const memory{R"(xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5)))"};
-}  // namespace day3_test1
+}  // namespace day3_test2
 
 namespace day3 {
 inline std::string_view const memory{

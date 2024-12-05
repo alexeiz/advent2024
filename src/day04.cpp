@@ -5,6 +5,8 @@
 using namespace std;
 
 namespace {
+/// Xmas word search.
+/// https://adventofcode.com/2024/day/4
 
 using field_t = array<array<char, 4>, 4>;
 constexpr char X = '\xff';
@@ -93,23 +95,22 @@ constexpr field_t pattern_y2 = {{
     {'X', 0,  0,  0},
 }};
 
-struct matcher
-{
-    field_t mask;
-    vector<field_t> patterns;
-};
-
-auto const matchers = vector{
-    matcher{mask_v, vector{pattern_v1, pattern_v2}},
-    matcher{mask_h, vector{pattern_h1, pattern_h2}},
-    matcher{mask_x, vector{pattern_x1, pattern_x2}},
-    matcher{mask_y, vector{pattern_y1, pattern_y2}},
-};
-
-/// Xmas word search.
-/// https://adventofcode.com/2024/day/4
 puzzle_reg _1{"4.1", []{
     using day4::word_search;
+
+    struct matcher
+    {
+        field_t mask;
+        vector<field_t> patterns;
+    };
+
+    auto const matchers = vector{
+        matcher{mask_v, vector{pattern_v1, pattern_v2}},
+        matcher{mask_h, vector{pattern_h1, pattern_h2}},
+        matcher{mask_x, vector{pattern_x1, pattern_x2}},
+        matcher{mask_y, vector{pattern_y1, pattern_y2}},
+    };
+
     auto rows = size(word_search);
     auto cols = strlen(word_search[0]);
 
@@ -139,5 +140,84 @@ puzzle_reg _1{"4.1", []{
     }
 
     fmt::println("XMAS words found: {}", words);
+}};
+
+/// X-mas pattern search.
+/// https://adventofcode.com/2024/day/4#part2
+
+using field3_t = array<array<char, 3>, 3>;
+
+constexpr field3_t mask_c = {{
+    {X, 0, X},
+    {0, X, 0},
+    {X, 0, X},
+}};
+
+constexpr field3_t pattern_c1 = {{
+    {'M', 0, 'S'},
+    { 0, 'A', 0 },
+    {'M', 0, 'S'},
+}};
+
+constexpr field3_t pattern_c2 = {{
+    {'S', 0, 'M'},
+    { 0, 'A', 0 },
+    {'S', 0, 'M'},
+}};
+
+constexpr field3_t pattern_c3 = {{
+    {'M', 0, 'M'},
+    { 0, 'A', 0 },
+    {'S', 0, 'S'},
+}};
+
+constexpr field3_t pattern_c4 = {{
+    {'S', 0, 'S'},
+    { 0, 'A', 0 },
+    {'M', 0, 'M'},
+}};
+
+puzzle_reg _2{"4.2", []{
+    using day4::word_search;
+
+    struct matcher
+    {
+        field3_t mask;
+        vector<field3_t> patterns;
+    };
+
+    auto const matchers = vector{
+        matcher{mask_c, vector{pattern_c1, pattern_c2, pattern_c3, pattern_c4}},
+    };
+
+    auto rows = size(word_search);
+    auto cols = strlen(word_search[0]);
+
+    unsigned words = 0;
+    for (size_t x = 0; x != rows; ++x)
+    {
+        for (size_t y = 0; y != cols; ++y)
+        {
+            for (auto & m: matchers)
+            {
+                field3_t impr{};
+                for (size_t i = 0; i != size(impr); ++i)
+                {
+                    for (size_t j = 0; j != size(impr[i]); ++j)
+                    {
+                        if (x + i >= rows or y + j >= cols)
+                            impr[i][j] = 0;
+                        else
+                            impr[i][j] = word_search[x + i][y + j] & m.mask[i][j];
+                    }
+                }
+
+                for (auto & p: m.patterns)
+                    words += impr == p;
+            }
+        }
+    }
+
+    fmt::println("X-MAS patterns found: {}", words);
 }};
 }

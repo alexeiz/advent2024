@@ -7,3 +7,9 @@ build-dbg/
 build-rel/
 .gdb_history
 .vscode/settings.json
+
+GPATH
+GRTAGS
+GTAGS
+*.d
+*.d

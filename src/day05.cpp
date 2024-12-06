@@ -5,31 +5,13 @@
 using namespace std;
 
 namespace {
-using ordering_t = set<pair<int, int>>;
-
-class page_cmp
-{
-public:
-    page_cmp(ordering_t const & ordering)
-        : ordering_{ordering}
-    {}
-
-    bool operator()(int x, int y) const
-    {
-        return !ordering_.contains({y, x});
-    }
-
-private:
-    ordering_t const & ordering_;
-};
-
 /// Find correctly ordered updates.
 /// https://adventofcode.com/2024/day/5
 puzzle_reg _1{"5.1", []{
-    using day5::ordering;
+    auto const & ordering = day5::ordering;
     using day5::updates;
 
-    page_cmp cmp{ordering};
+    auto cmp = [&ordering](int x, int y) { return !ordering.contains({y, x}); };
     int middles = 0;
     for (auto const & upd: updates)
     {
@@ -46,10 +28,10 @@ puzzle_reg _1{"5.1", []{
 /// Fix incorrectly ordered updates.
 /// https://adventofcode.com/2024/day/5#part2
 puzzle_reg _2{"5.2", []{
-    using day5::ordering;
+    auto const & ordering = day5::ordering;
     using day5::updates;
 
-    page_cmp cmp{ordering};
+    auto cmp = [&ordering](int x, int y) { return !ordering.contains({y, x}); };
     int middles = 0;
     for (auto const & upd: updates)
     {

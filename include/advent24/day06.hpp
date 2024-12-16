@@ -3,22 +3,13 @@
 #include <boost/multi_array.hpp>
 
 namespace day6 {
-using matrix_t = boost::multi_array_ref<char, 2>;
-
-enum class cell : char
-{
-    obst = '#',
-    guard_up = '^',
-    guard_down = 'v',
-    guard_left = '<',
-    guard_right = '>',
-    visited = 'X',
-};
+using matrix_ref = boost::multi_array_ref<char, 2>;
+using matrix_t = boost::multi_array<char, 2>;
 }  // namespace day6
 
 namespace day6_test {
+using day6::matrix_ref;
 using day6::matrix_t;
-using day6::cell;
 
 inline char lab_map[] = {
     "....#....."

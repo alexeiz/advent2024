@@ -23,7 +23,7 @@ constexpr tuple<int, int> dirs[] = {
     {0, -1},
 };
 
-constexpr char visitor[] = {
+constexpr char visit[] = {
     '\x41',
     '\x42',
     '\x44',
@@ -56,7 +56,7 @@ auto find_guard(day6::matrix_ref const & m)
             }
     }
 
-    std::unreachable();
+    unreachable();
 }
 
 auto guard_dir(day6::matrix_ref const & m, int x, int y)
@@ -74,7 +74,7 @@ auto guard_dir(day6::matrix_ref const & m, int x, int y)
     case guard_left:
         return 3;
     default:
-        std::unreachable();
+        unreachable();
     }
 }
 
@@ -91,6 +91,27 @@ void clean_lab(day6::matrix_ref & m)
                 m[x][y] = 0;
 }
 
+void walk_lab(auto & lab, int gx, int gy, int gdir, auto && visitor)
+{
+    auto [dx, dy] = dirs[gdir];
+    while (true)
+    {
+        for (; is_inside(lab, gx, gy) && cell{lab[gx][gy]} != cell::obst; gx += dx, gy += dy)
+        {
+            if (visitor(lab, gx, gy, gdir))
+                return;
+        }
+
+        if (!is_inside(lab, gx, gy))
+            break;
+
+        // step back and rotate right
+        gx -= dx, gy -= dy;
+        gdir = (gdir + 1) % size(dirs);
+        tie(dx, dy) = dirs[gdir];
+    }
+}
+
 /// Find guard visited positions.
 /// https://adventofcode.com/2024/day/6
 puzzle_reg _1{"6.1", []{
@@ -102,29 +123,17 @@ puzzle_reg _1{"6.1", []{
 
     auto [gx, gy] = find_guard(lab);
     int gdir = guard_dir(lab, gx, gy);
-    auto [dx, dy] = dirs[gdir];
+    lab[gx][gy] = 0;
 
     int visited = 0;
-    lab[gx][gy] = 0;
-    while (true)
-    {
-        for (; is_inside(lab, gx, gy) && cell{lab[gx][gy]} != cell::obst; gx += dx, gy += dy)
+    walk_lab(lab, gx, gy, gdir, [&](auto & lab, int x, int y, int d) {
+        if ((lab[x][y] & visit_mask) == 0)
         {
-            if ((lab[gx][gy] & visit_mask) == 0)
-            {
-                lab[gx][gy] |= visitor[gdir];
-                ++visited;
-            }
+            lab[x][y] |= visit[d];
+            ++visited;
         }
-
-        if (!is_inside(lab, gx, gy))
-            break;
-
-        // step back and rotate right
-        gx -= dx, gy -= dy;
-        gdir = (gdir + 1) % size(dirs);
-        tie(dx, dy) = dirs[gdir];
-    }
+        return false;
+    });
 
     fmt::println("guard visited positions: {}", visited);
 }};
@@ -145,54 +154,34 @@ puzzle_reg _2{"6.2", []{
     auto guard_path = [](matrix_ref const & lab_ref, int gx, int gy, int gdir) {
         vector<tuple<int, int>> guard_path;
         matrix_t lab{lab_ref};
-        auto [dx, dy] = dirs[gdir];
 
-        while (true)
-        {
-            for (; is_inside(lab, gx, gy) && cell{lab[gx][gy]} != cell::obst; gx += dx, gy += dy)
+        walk_lab(lab, gx, gy, gdir, [&](auto & lab, int x, int y, int d) {
+            if ((lab[x][y] & visit_mask) == 0)
             {
-                if ((lab[gx][gy] & visit_mask) == 0)
-                {
-                    lab[gx][gy] |= visitor[gdir];
-                    guard_path.push_back({gx, gy});
-                }
+                lab[x][y] |= visit[d];
+                guard_path.push_back({x, y});
             }
-
-            if (!is_inside(lab, gx, gy))
-                break;
-
-            // step back and rotate right
-            gx -= dx, gy -= dy;
-            gdir = (gdir + 1) % size(dirs);
-            tie(dx, dy) = dirs[gdir];
-        }
+            return false;
+        });
 
         return guard_path;
     }(lab_ref, gx, gy, gdir);
 
     auto has_loop = [](matrix_t & lab, int gx, int gy, int gdir) {
-        auto [dx, dy] = dirs[gdir];
+        bool looped = false;
 
-        while (true)
-        {
-            for (; is_inside(lab, gx, gy) && cell{lab[gx][gy]} != cell::obst; gx += dx, gy += dy)
+        walk_lab(lab, gx, gy, gdir, [&](auto & lab, int x, int y, int d) {
+            if ((lab[x][y] & visit[d]) == visit[d])
             {
-                if ((lab[gx][gy] & visitor[gdir]) == visitor[gdir])
-                    return true;
-
-                lab[gx][gy] |= visitor[gdir];
+                looped = true;
+                return true;
             }
 
-            if (!is_inside(lab, gx, gy))
-                return false;
+            lab[x][y] |= visit[d];
+            return false;
+        });
 
-            // step back and rotate right
-            gx -= dx, gy -= dy;
-            gdir = (gdir + 1) % size(dirs);
-            tie(dx, dy) = dirs[gdir];
-        }
-
-        std::unreachable();
+        return looped;
     };
 
     int loop_obst = 0;

@@ -184,16 +184,15 @@ puzzle_reg _2{"6.2", []{
         return looped;
     };
 
-    int loop_obst = 0;
-    for (auto [x, y]: guard_path)
-    {
-        if (x == gx and y == gy)
-            continue;
-
-        matrix_t lab{lab_ref};
-        lab[x][y] = char(cell::obst);
-        loop_obst += has_loop(lab, gx, gy, gdir);
-    }
+    auto loop_obst = flux::ref(guard_path)
+        .drop_while([=](auto pos) {
+            return pos == tuple{gx, gy};
+        }).count_if([&](auto pos) {
+            auto [x, y] = pos;
+            matrix_t lab{lab_ref};
+            lab[x][y] = char(cell::obst);
+            return has_loop(lab, gx, gy, gdir);
+        });
 
     fmt::println("loop obstructions: {}", loop_obst);
 }};

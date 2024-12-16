@@ -10,8 +10,8 @@ list(APPEND LIBRARIES flux::flux)
 CPMAddPackage(
   NAME Boost
   VERSION 1.87.0
-  URL https://github.com/boostorg/boost/releases/download/boost-1.87.0.beta1/boost-1.87.0.beta1-cmake.tar.xz
-  URL_HASH SHA256=31dd2b0aa588d110b96abc1f0e9d9bd894f21f9dd2d28b52ee360fa69a20d09e
+  URL https://github.com/boostorg/boost/releases/download/boost-1.87.0/boost-1.87.0-cmake.tar.xz
+  URL_HASH SHA256=7da75f171837577a52bbf217e17f8ea576c7c246e4594d617bfde7fafd408be5
   OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES regex\\\;multi_array"
 )
 list(APPEND LIBRARIES Boost::regex Boost::multi_array)

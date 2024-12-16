@@ -29,6 +29,7 @@
 
 #include <flux.hpp>
 #include <boost/regex.hpp>
+#include <boost/multi_array.hpp>
 
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
